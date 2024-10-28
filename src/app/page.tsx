@@ -1,8 +1,8 @@
-import GeoGuessrClone from "@/components/Geoguesser";
+import GeoGuesser from "@/components/Geoguesser";
 export default function Home() {
   return (
     <>
-      <GeoGuessrClone />
+      <GeoGuesser />
     </>
   );
 }

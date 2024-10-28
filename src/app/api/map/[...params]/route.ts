@@ -1,10 +1,11 @@
-// app/api/map/[...params]/route.ts
+// app/api/map/[...params]/route.js
+
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request, { params }: any) {
-  const [z, x, y] = params;
+  const [z, x, y] = params.params;
 
   // Validate parameters
   if (!z || !x || !y) {

@@ -15,7 +15,7 @@ import {
   MoveDown,
 } from "lucide-react";
 
-const GeoGuessrClone = () => {
+const GeoGuesser = () => {
   const mapRef = useRef(null);
   const dragRef = useRef({ isDragging: false, startX: 0, startY: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -349,7 +349,7 @@ const GeoGuessrClone = () => {
     <div className="w-full max-w-4xl mx-auto p-4">
       <Card>
         <CardHeader>
-          <CardTitle>GeoGuessr Clone</CardTitle>
+          <CardTitle>GeoGuessr</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex justify-between mb-4">
@@ -587,4 +587,4 @@ const GeoGuessrClone = () => {
   );
 };
 
-export default GeoGuessrClone;
+export default GeoGuesser;
