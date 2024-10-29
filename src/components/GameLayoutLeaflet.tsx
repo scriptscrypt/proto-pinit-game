@@ -355,27 +355,29 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import useAuth from "@/hooks/useAuth";
+import { UnifiedWalletButton } from "@jup-ag/wallet-adapter";
+import { divIcon, LatLng } from "leaflet";
+import "leaflet/dist/leaflet.css";
 import {
-  Search,
-  MapPin,
-  RefreshCw,
-  Navigation,
   Flag,
   Loader,
+  MapPin,
+  Navigation,
+  RefreshCw,
+  Search,
 } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import {
   MapContainer,
-  TileLayer,
-  Popup,
-  useMapEvents,
   Marker,
+  Popup,
+  TileLayer,
+  useMapEvents,
 } from "react-leaflet";
-import { divIcon, LatLng } from "leaflet";
-import { renderToStaticMarkup } from "react-dom/server";
-import "leaflet/dist/leaflet.css";
 
 // Types and Interfaces
 interface Location {
@@ -467,6 +469,7 @@ const GAME_LOCATIONS: Location[] = [
 
 export function GameLayoutLeaflet(): JSX.Element {
   const [isClient, setIsClient] = useState(false);
+  const { solSignature, fnTriggerSignature } = useAuth();
 
   // Removed unused state
   const [points] = useState<number>(11111);
@@ -606,10 +609,20 @@ export function GameLayoutLeaflet(): JSX.Element {
             />
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
           </div>
-          <div className="flex items-center space-x-2 bg-[#1a1a1a] px-3 py-1 rounded-full">
-            <span>{points} P</span>
-            <div className="w-6 h-6 bg-[#87CEEB] rounded-full"></div>
-          </div>
+          {!solSignature && <UnifiedWalletButton />}
+          {!solSignature && (
+            <Button onClick={() => fnTriggerSignature("Test Login")}>
+              Login
+            </Button>
+          )}
+          {solSignature && (
+            <>
+              <div className="flex items-center space-x-2 bg-[#1a1a1a] px-3 py-1 rounded-full">
+                <span>{points} P</span>
+                <div className="w-6 h-6 bg-[#87CEEB] rounded-full"></div>
+              </div>
+            </>
+          )}
         </div>
       </header>
 
