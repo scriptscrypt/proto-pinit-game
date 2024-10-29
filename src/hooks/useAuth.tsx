@@ -1,11 +1,11 @@
 import { useWallet } from "@jup-ag/wallet-adapter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const useAuth = () => {
   const [auth, setAuth] = useState(false);
   const [wallet, setWallet] = useState();
   const [signature, setSignature] = useState<any>();
-  const { signMessage } = useWallet();
+  const { signMessage, connected: solConnected } = useWallet();
 
   const fnTriggerSignature = async (signInMessage: string) => {
     try {
@@ -26,6 +26,12 @@ const useAuth = () => {
     }
   };
 
+  useEffect(() => {
+    if (solConnected) {
+      fnTriggerSignature("Hello, Solana!");
+    }
+  }, [solConnected]);
+
   return {
     auth,
     setAuth,
@@ -34,6 +40,7 @@ const useAuth = () => {
     solSignature: signature,
     setSolSignature: setSignature,
     fnTriggerSignature,
+    solConnected,
   };
 };
 
