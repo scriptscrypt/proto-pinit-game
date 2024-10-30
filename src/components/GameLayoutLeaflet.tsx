@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import useAuth from "@/hooks/useAuth";
-import { UnifiedWalletButton } from "@jup-ag/wallet-adapter";
+// import useAuth from "@/hooks/useAuth";
+import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
+// import { UnifiedWalletButton } from "@jup-ag/wallet-adapter";
 import { divIcon, LatLng } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
@@ -114,10 +115,10 @@ const GAME_LOCATIONS: Location[] = [
 
 export function GameLayoutLeaflet(): JSX.Element {
   const [isClient, setIsClient] = useState(false);
-  const { solSignature, fnTriggerSignature, solConnected } = useAuth();
+  // const { solSignature, fnTriggerSignature, solConnected } = useAuth();
 
-  // Removed unused state
-  const [points] = useState<number>(11111);
+  // // Removed unused state
+  // const [points] = useState<number>(11111);
 
   const [gameState, setGameState] = useState<GameState>({
     score: 0,
@@ -253,20 +254,21 @@ export function GameLayoutLeaflet(): JSX.Element {
             />
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
           </div>
-          {!solConnected && <UnifiedWalletButton />}
+          <DynamicWidget />
+          {/* {!solConnected && <UnifiedWalletButton />} */}
           {/* {!solSignature && (
             <Button onClick={() => fnTriggerSignature("Test Login")}>
               Login
             </Button>
           )} */}
-          {solSignature && (
+          {/* {solSignature && (
             <>
               <div className="flex items-center space-x-2 bg-[#1a1a1a] px-3 py-1 rounded-full">
                 <span>{points} P</span>
                 <div className="w-6 h-6 bg-[#87CEEB] rounded-full"></div>
               </div>
             </>
-          )}
+          )} */}
         </div>
       </header>
 
