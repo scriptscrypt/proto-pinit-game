@@ -1,20 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 // import useAuth from "@/hooks/useAuth";
-import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 // import { UnifiedWalletButton } from "@jup-ag/wallet-adapter";
+import { NavbarComp } from "@/components/navbar/NavbarComp";
 import { divIcon, LatLng } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import {
-  Flag,
-  Loader,
-  MapPin,
-  Navigation,
-  RefreshCw,
-  Search,
-} from "lucide-react";
+import { Flag, Loader, MapPin, Navigation, RefreshCw } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import {
@@ -223,54 +215,7 @@ export function GameLayoutLeaflet(): JSX.Element {
   }
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white font-mono">
-      <header className="flex justify-between items-center p-4 bg-[#0a0a0a]">
-        <div className="text-2xl font-bold">proto</div>
-        <nav className="space-x-4">
-          <Button
-            variant="ghost"
-            className="text-white hover:text-white hover:bg-[#1a1a1a]"
-          >
-            Profile
-          </Button>
-          <Button
-            variant="ghost"
-            className="text-white hover:text-white hover:bg-[#1a1a1a]"
-          >
-            How to Play?
-          </Button>
-          <Button
-            variant="ghost"
-            className="text-white hover:text-white hover:bg-[#1a1a1a]"
-          >
-            Leaderboard
-          </Button>
-        </nav>
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Maps, Mappers & More"
-              className="pl-8 bg-[#1a1a1a] text-white border-none focus:ring-1 focus:ring-[#87CEEB]"
-            />
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
-          </div>
-          <DynamicWidget />
-          {/* {!solConnected && <UnifiedWalletButton />} */}
-          {/* {!solSignature && (
-            <Button onClick={() => fnTriggerSignature("Test Login")}>
-              Login
-            </Button>
-          )} */}
-          {/* {solSignature && (
-            <>
-              <div className="flex items-center space-x-2 bg-[#1a1a1a] px-3 py-1 rounded-full">
-                <span>{points} P</span>
-                <div className="w-6 h-6 bg-[#87CEEB] rounded-full"></div>
-              </div>
-            </>
-          )} */}
-        </div>
-      </header>
+      <NavbarComp />
 
       <main className="p-4">
         <div className="flex justify-between mb-4">
@@ -290,7 +235,7 @@ export function GameLayoutLeaflet(): JSX.Element {
               </div>
             </div>
           </div>
-          <div className="md:w-[48%] aspect-video bg-[#1a1a1a] rounded-lg overflow-hidden">
+          <div className="md:w-[48%] aspect-video bg-[#1a1a1a] rounded-lg overflow-hidden z-30">
             <MapContainer
               center={[20, 0]}
               zoom={2}
