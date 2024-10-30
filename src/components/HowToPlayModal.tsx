@@ -102,7 +102,7 @@ export function HowToPlayModal() {
 
               <div className="space-y-4 font-mono">
                 <p className="flex items-center gap-2">
-                  🎮 Proto's Map to Earn is now Live
+                  🎮 Proto &apos; s Map to Earn is now Live
                 </p>
                 <p className="flex items-center gap-2">
                   ⭐ Continue earning points by mapping, referring and playing Maps.fun!
