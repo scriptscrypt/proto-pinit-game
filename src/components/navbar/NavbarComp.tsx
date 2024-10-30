@@ -6,10 +6,8 @@ import { Input } from "@/components/ui/input";
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export function NavbarComp() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
 
   const handleLeaderboardClick = () => {
