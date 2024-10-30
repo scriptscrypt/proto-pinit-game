@@ -1,9 +1,9 @@
 "use client";
 
+import GoogleLoginButton from "@/components/Auth/GoogleLoginBtn";
 import { HowToPlayModal } from "@/components/HowToPlayModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -42,7 +42,8 @@ export function NavbarComp() {
           />
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
         </div>
-        <DynamicWidget />
+        {/* <DynamicWidget /> */}
+        <GoogleLoginButton />
       </div>
     </header>
   );
