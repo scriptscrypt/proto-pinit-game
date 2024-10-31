@@ -1,1 +1,9 @@
 export const envDynamicID = process.env.NEXT_PUBLIC_DYNAMIC_ID;
+export const envFirebaseAPIKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+export const envFirebaseAuthDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+export const envFirebaseProjectID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+export const envFirebaseStorageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+export const envFirebaseMessagingSenderId = process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID;
+export const envFirebaseAppID = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
+export const envFirebaseMeasurementID = process.env.NEXT_PUBLIC_MEASUREMENT_ID;
+export const envAPIBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL;

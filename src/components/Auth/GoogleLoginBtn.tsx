@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../../firebase";
+import { authService } from "@/services/apis/be/authService";
 
 const GoogleLoginButton = () => {
   const [error, setError] = useState("");
@@ -24,6 +25,12 @@ const GoogleLoginButton = () => {
       const idToken = await result.user.getIdToken();
       // Store it in Backend
       console.log("ID Token:", idToken);
+
+      const authRes = await authService.apiSignIn(idToken);
+      console.log("authRes", authRes);
+
+      const userDetails = await authService.apiGetUserDetails();
+      console.log("userDetails", userDetails);
 
       return idToken;
     } catch (err : any) {

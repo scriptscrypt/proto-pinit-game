@@ -1,6 +1,6 @@
 "use client";
 
-import GoogleLoginButton from "@/components/Auth/GoogleLoginBtn";
+import GoogleLoginButton from "@/components/auth/GoogleLoginBtn";
 import { HowToPlayModal } from "@/components/HowToPlayModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
