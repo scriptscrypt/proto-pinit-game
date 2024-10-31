@@ -4,6 +4,7 @@ import { useState } from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../../firebase";
 import { authService } from "@/services/apis/be/authService";
+import { setupAuthInterceptor } from "@/services/apis/config/axiosConfig";
 
 const GoogleLoginButton = () => {
   const [error, setError] = useState("");
@@ -29,11 +30,13 @@ const GoogleLoginButton = () => {
       const authRes = await authService.apiSignIn(idToken);
       console.log("authRes", authRes);
 
+      setupAuthInterceptor(authRes?.access_token);
+
       const userDetails = await authService.apiGetUserDetails();
       console.log("userDetails", userDetails);
 
       return idToken;
-    } catch (err : any) {
+    } catch (err: any) {
       setError(err?.message.toString());
       console.error("Login error:", err);
     } finally {

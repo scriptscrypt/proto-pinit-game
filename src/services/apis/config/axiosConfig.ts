@@ -18,6 +18,7 @@ export const setupAuthInterceptor = (accessToken: string) => {
       if (accessToken) {
         config.headers["Authorization"] = `Bearer ${accessToken}`;
       }
+      console.log("config set in interceptor", config);
       return config;
     },
     (error) => {
