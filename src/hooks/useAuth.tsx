@@ -6,6 +6,7 @@ const useAuth = () => {
   const [wallet, setWallet] = useState();
   const [signature, setSignature] = useState<any>();
   const { signMessage, connected: solConnected } = useWallet();
+  const [signedInEmail, setSignedInEmail] = useState<string>();
 
   const fnTriggerSignature = async (signInMessage: string) => {
     try {
@@ -41,6 +42,8 @@ const useAuth = () => {
     setSolSignature: setSignature,
     fnTriggerSignature,
     solConnected,
+    signedInEmail,
+    setSignedInEmail,
   };
 };
 

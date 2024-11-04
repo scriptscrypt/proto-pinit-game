@@ -16,6 +16,8 @@ import {
   TileLayer,
   useMapEvents,
 } from "react-leaflet";
+import useAuth from "@/hooks/useAuth";
+import { useGame } from "@/hooks/useGame";
 
 // Types and Interfaces
 interface Location {
@@ -109,8 +111,27 @@ export function GameLayoutLeaflet(): JSX.Element {
   const [isClient, setIsClient] = useState(false);
   // const { solSignature, fnTriggerSignature, solConnected } = useAuth();
 
-  // // Removed unused state
-  // const [points] = useState<number>(11111);
+  const { signedInEmail, setSignedInEmail } = useAuth(); // Get current user
+  const { currentGameId, fnStartNewGame, fnSubmitGuess, fnCompleteGame } =
+    useGame(signedInEmail || "");
+
+  // Initialize game
+  useEffect(() => {
+    const initGame = async () => {
+      // Get email from your auth system
+      const email = localStorage.getItem("userEmail"); // Or however you store the signed-in user's email
+      if (email) {
+        setSignedInEmail(email);
+        await fnStartNewGame();
+        setGameState((prev) => ({
+          ...prev,
+          currentLocation: GAME_LOCATIONS[0],
+        }));
+      }
+    };
+
+    initGame();
+  }, [fnStartNewGame, setSignedInEmail]);
 
   const [gameState, setGameState] = useState<GameState>({
     score: 0,
@@ -121,16 +142,14 @@ export function GameLayoutLeaflet(): JSX.Element {
     guessedLocation: null,
     showScore: false,
   });
-
   const [selectedPosition, setSelectedPosition] = useState<LatLng | null>(null);
 
-  // Initialize game
+  // Modify game completion to save to database
   useEffect(() => {
-    setGameState((prev) => ({
-      ...prev,
-      currentLocation: GAME_LOCATIONS[0],
-    }));
-  }, []); // Empty dependency array as GAME_LOCATIONS is constant
+    if (gameState.gameOver && currentGameId) {
+      fnCompleteGame();
+    }
+  }, [gameState.gameOver, currentGameId, fnCompleteGame]);
 
   // Game logic
   const calculateDistance = useCallback(
@@ -150,7 +169,7 @@ export function GameLayoutLeaflet(): JSX.Element {
     []
   );
 
-  const handleGuess = useCallback((): void => {
+  const handleGuess = useCallback(async (): Promise<void> => {
     if (!selectedPosition || !gameState.currentLocation) return;
 
     const distance = calculateDistance({
@@ -159,6 +178,19 @@ export function GameLayoutLeaflet(): JSX.Element {
     });
     const points = Math.max(5000 - Math.floor(distance * 2), 0);
 
+    // Save guess to database
+    await {
+      roundNumber: gameState.round,
+      guessLocation: selectedPosition,
+      targetLocation: {
+        lat: gameState.currentLocation.lat,
+        lng: gameState.currentLocation.lng,
+        name: gameState.currentLocation.name,
+      },
+      score: points,
+      distance,
+    };
+
     setGameState((prev) => ({
       ...prev,
       score: prev.score + points,
@@ -166,12 +198,7 @@ export function GameLayoutLeaflet(): JSX.Element {
       showScore: true,
       gameOver: prev.round >= prev.totalRounds,
     }));
-  }, [
-    selectedPosition,
-    gameState.currentLocation,
-    // gameState.round,
-    calculateDistance,
-  ]);
+  }, [selectedPosition, gameState, fnSubmitGuess, calculateDistance]);
 
   const nextRound = useCallback((): void => {
     setGameState((prev) => ({

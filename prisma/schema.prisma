@@ -1,0 +1,60 @@
+// prisma/schema.prisma
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  games     Game[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Game {
+  id           String       @id @default(uuid())
+  playerEmail  String      // Changed from userId
+  player       User         @relation(fields: [playerEmail], references: [email]) // Changed reference
+  totalScore   Int         @default(0)
+  rounds       GameRound[]
+  status       GameStatus  @default(IN_PROGRESS)
+  startedAt    DateTime    @default(now())
+  endedAt      DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([playerEmail]) // Updated index
+}
+
+model GameRound {
+  id          String    @id @default(uuid())
+  gameId      String
+  game        Game      @relation(fields: [gameId], references: [id])
+  roundNumber Int
+  targetLat   Float
+  targetLng   Float
+  targetName  String
+  guessLat    Float?
+  guessLng    Float?
+  distance    Float?
+  score       Int?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([gameId])
+}
+
+enum GameStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
