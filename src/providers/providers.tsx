@@ -2,10 +2,6 @@
 "use client";
 
 import React, { ReactNode } from "react";
-// import {
-//   UnifiedWalletButton,
-//   UnifiedWalletProvider,
-// } from "@jup-ag/wallet-adapter";
 import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
 import { SolanaWalletConnectors } from "@dynamic-labs/solana";
 import { envDynamicID } from "@/services/env/envConfig";

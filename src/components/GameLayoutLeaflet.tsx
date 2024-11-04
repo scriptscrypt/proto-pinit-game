@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-// import useAuth from "@/hooks/useAuth";
-// import { UnifiedWalletButton } from "@jup-ag/wallet-adapter";
 import { NavbarComp } from "@/components/navbar/NavbarComp";
 import { divIcon, LatLng } from "leaflet";
 import "leaflet/dist/leaflet.css";
