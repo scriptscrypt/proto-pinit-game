@@ -4,11 +4,13 @@ import { useState } from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../../firebase";
 import { authService } from "@/services/apis/be/authService";
-import { setupAuthInterceptor } from "@/services/apis/config/axiosConfig";
+import { tokenStorage } from "@/services/local/tokenStorage";
+import { useRouter } from "next/navigation";
 
 const GoogleLoginButton = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleGoogleLogin = async () => {
     try {
@@ -20,25 +22,29 @@ const GoogleLoginButton = () => {
 
       // Trigger Google popup sign in
       const result = await signInWithPopup(auth, provider);
-      console.log("result", result);
 
       // Get ID token
       const idToken = await result.user.getIdToken();
+
       // Store it in Backend
-      console.log("ID Token:", idToken);
-
       const authRes = await authService.apiSignIn(idToken);
-      console.log("authRes", authRes);
 
-      setupAuthInterceptor(authRes?.access_token);
+      // Store tokens and user email
+      tokenStorage.setAccessToken(authRes.access_token);
+      tokenStorage.setUserEmail(result.user.email || "");
 
+      // Get user details
       const userDetails = await authService.apiGetUserDetails();
       console.log("userDetails", userDetails);
+
+      // Redirect to game or dashboard
+      router.push("/game");
 
       return idToken;
     } catch (err: any) {
       setError(err?.message.toString());
       console.error("Login error:", err);
+      tokenStorage.clearTokens(); // Clear any partial data on error
     } finally {
       setLoading(false);
     }

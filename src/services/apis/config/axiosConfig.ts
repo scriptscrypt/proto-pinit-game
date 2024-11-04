@@ -1,4 +1,6 @@
+// services/apis/config/axiosConfig.ts
 import { envAPIBaseURL } from "@/services/env/envConfig";
+import { tokenStorage } from "@/services/local/tokenStorage";
 import axios from "axios";
 
 export const BASE_API_URL = envAPIBaseURL || "";
@@ -11,18 +13,29 @@ export const axiosInstance = axios.create({
   },
 });
 
-// Interceptor to add authorization token to requests
-export const setupAuthInterceptor = (accessToken: string) => {
-  axiosInstance.interceptors.request.use(
-    (config) => {
-      if (accessToken) {
-        config.headers["Authorization"] = `Bearer ${accessToken}`;
-      }
-      console.log("config set in interceptor", config);
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
+// Set up interceptor immediately
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = tokenStorage.getAccessToken();
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
-  );
-};
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Optional: Add response interceptor to handle token expiry
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      // Clear tokens and redirect to login
+      tokenStorage.clearTokens();
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
