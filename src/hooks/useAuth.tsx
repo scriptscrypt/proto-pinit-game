@@ -56,7 +56,7 @@ import { tokenStorage } from "@/services/local/tokenStorage";
 
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [signedInEmail, setSignedInEmail] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -65,17 +65,17 @@ export const useAuth = () => {
 
     if (token && email) {
       setIsAuthenticated(true);
-      setUserEmail(email);
+      setSignedInEmail(email);
     } else {
       setIsAuthenticated(false);
-      setUserEmail(null);
+      setSignedInEmail(null);
     }
   }, []);
 
   const logout = () => {
     tokenStorage.clearTokens();
     setIsAuthenticated(false);
-    setUserEmail(null);
+    setSignedInEmail(null);
     router.push("/login");
   };
 
@@ -86,7 +86,8 @@ export const useAuth = () => {
 
   return {
     isAuthenticated,
-    userEmail,
+    signedInEmail,
+    setSignedInEmail,
     logout,
     checkAuth,
   };

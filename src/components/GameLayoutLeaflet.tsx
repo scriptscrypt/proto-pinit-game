@@ -14,7 +14,7 @@ import {
   TileLayer,
   useMapEvents,
 } from "react-leaflet";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { useGame } from "@/hooks/useGame";
 
 // Types and Interfaces
