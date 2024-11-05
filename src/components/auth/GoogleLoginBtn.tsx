@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../../../firebase";
 import { authService } from "@/services/apis/be/authService";
 import { tokenStorage } from "@/services/local/tokenStorage";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { auth } from "../../../firebase";
 
 const GoogleLoginButton = () => {
   const [error, setError] = useState("");
@@ -16,6 +16,8 @@ const GoogleLoginButton = () => {
     try {
       setLoading(true);
       setError("");
+      localStorage.setItem("user_email", "tirumaladasa@gmail.com");
+
 
       // Initialize Firebase Auth provider
       const provider = new GoogleAuthProvider();
@@ -32,6 +34,7 @@ const GoogleLoginButton = () => {
       // Store tokens and user email
       tokenStorage.setAccessToken(authRes.access_token);
       tokenStorage.setUserEmail(result.user.email || "");
+
 
       // Get user details
       const userDetails = await authService.apiGetUserDetails();

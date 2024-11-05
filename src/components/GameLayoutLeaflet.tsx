@@ -16,9 +16,11 @@ import {
 } from "react-leaflet";
 import { useAuth } from "@/hooks/useAuth";
 import { useGame } from "@/hooks/useGame";
+import { mapService } from "@/services/apis/be/mapService";
 
 // Types and Interfaces
 interface Location {
+  url: string | undefined;
   lat: number;
   lng: number;
   name: string;
@@ -96,13 +98,32 @@ const MapClickHandler: React.FC<MapClickHandlerProps> = ({ onMapClick }) => {
   return null;
 };
 
+// Previous Logic :
 // Sample locations as a constant outside the component
 const GAME_LOCATIONS: Location[] = [
-  { lat: 48.8584, lng: 2.2945, name: "Paris", hint: "City of Light" },
-  { lat: 40.7128, lng: -74.006, name: "New York", hint: "The Big Apple" },
-  { lat: -33.8688, lng: 151.2093, name: "Sydney", hint: "Harbor City" },
-  { lat: 35.6762, lng: 139.6503, name: "Tokyo", hint: "Rising Sun" },
-  { lat: 51.5074, lng: -0.1278, name: "London", hint: "Big Ben's Home" },
+  { lat: 48.8584, lng: 2.2945, name: "Paris", hint: "City of Light", url: "" },
+  {
+    lat: 40.7128,
+    lng: -74.006,
+    name: "New York",
+    hint: "The Big Apple",
+    url: "",
+  },
+  {
+    lat: -33.8688,
+    lng: 151.2093,
+    name: "Sydney",
+    hint: "Harbor City",
+    url: "",
+  },
+  { lat: 35.6762, lng: 139.6503, name: "Tokyo", hint: "Rising Sun", url: "" },
+  {
+    lat: 51.5074,
+    lng: -0.1278,
+    name: "London",
+    hint: "Big Ben's Home",
+    url: "",
+  },
 ];
 
 export function GameLayoutLeaflet(): JSX.Element {
@@ -113,24 +134,59 @@ export function GameLayoutLeaflet(): JSX.Element {
   const { currentGameId, fnStartNewGame, fnSubmitGuess, fnCompleteGame } =
     useGame(signedInEmail || "");
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Function to get a random location
+  // We might want to have an api for this / set static longitude and latitude for user to guess.
+  const getRandomLocation = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Generate random coordinates
+      const lat = Math.random() * 180 - 90; // Random latitude between -90 and 90
+      const lng = Math.random() * 360 - 180; // Random longitude between -180 and 180
+
+      const response = await mapService.apiGetFrames(lat, lng);
+
+      return {
+        lat: response.location.latitude,
+        lng: response.location.longitude,
+        name: "Location", // You might want to add a way to get location names
+        hint: "Where is this?", // You might want to add hints based on the location
+        url: response.url,
+      };
+    } catch (error) {
+      console.error("Failed to fetch location", error);
+      setError("Failed to load location");
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Initialize game
   useEffect(() => {
     const initGame = async () => {
-      // Get email from your auth system
-      const email = localStorage.getItem("userEmail"); // Or however you store the signed-in user's email
+      const email = localStorage.getItem("userEmail");
       if (email) {
         setSignedInEmail(email);
         await fnStartNewGame();
-        setGameState((prev) => ({
-          ...prev,
-          currentLocation: GAME_LOCATIONS[0],
-        }));
+
+        // Get initial location
+        const location = await getRandomLocation();
+        if (location) {
+          setGameState((prev) => ({
+            ...prev,
+            currentLocation: location,
+          }));
+        }
       }
     };
 
     initGame();
   }, [fnStartNewGame, setSignedInEmail]);
-
   const [gameState, setGameState] = useState<GameState>({
     score: 0,
     round: 1,
@@ -198,28 +254,36 @@ export function GameLayoutLeaflet(): JSX.Element {
     }));
   }, [selectedPosition, gameState, fnSubmitGuess, calculateDistance]);
 
-  const nextRound = useCallback((): void => {
-    setGameState((prev) => ({
-      ...prev,
-      round: prev.round + 1,
-      currentLocation: GAME_LOCATIONS[prev.round],
-      guessedLocation: null,
-      showScore: false,
-    }));
-    setSelectedPosition(null);
+  // Modified nextRound to get new location from API
+  const nextRound = useCallback(async (): Promise<void> => {
+    const newLocation = await getRandomLocation();
+    if (newLocation) {
+      setGameState((prev) => ({
+        ...prev,
+        round: prev.round + 1,
+        currentLocation: newLocation,
+        guessedLocation: null,
+        showScore: false,
+      }));
+      setSelectedPosition(null);
+    }
   }, []);
 
-  const restartGame = useCallback((): void => {
-    setGameState({
-      score: 0,
-      round: 1,
-      totalRounds: 5,
-      gameOver: false,
-      currentLocation: GAME_LOCATIONS[0],
-      guessedLocation: null,
-      showScore: false,
-    });
-    setSelectedPosition(null);
+  // Modified restartGame to get new location from API
+  const restartGame = useCallback(async (): Promise<void> => {
+    const firstLocation = await getRandomLocation();
+    if (firstLocation) {
+      setGameState({
+        score: 0,
+        round: 1,
+        totalRounds: 5,
+        gameOver: false,
+        currentLocation: firstLocation,
+        guessedLocation: null,
+        showScore: false,
+      });
+      setSelectedPosition(null);
+    }
   }, []);
 
   const handleMapClick = useCallback(
@@ -253,12 +317,30 @@ export function GameLayoutLeaflet(): JSX.Element {
 
         {/* <div className="grid grid-cols-2 gap-4"> */}
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="md:w-[48%]  aspect-video bg-[#1a1a1a] rounded-lg overflow-hidden">
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="text-xl font-bold">
-                {gameState.currentLocation?.hint || "Loading..."}
+          <div className="md:w-[48%] aspect-video bg-[#1a1a1a] rounded-lg overflow-hidden">
+            {loading ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <Loader className="animate-spin" />
               </div>
-            </div>
+            ) : error ? (
+              <div className="w-full h-full flex items-center justify-center text-red-500">
+                {error}
+              </div>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                {gameState.currentLocation?.url ? (
+                  <img
+                    src={gameState.currentLocation.url}
+                    alt="Guess this location"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-xl font-bold">
+                    {gameState.currentLocation?.hint || "Loading..."}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           <div className="md:w-[48%] aspect-video bg-[#1a1a1a] rounded-lg overflow-hidden z-30">
             <MapContainer
