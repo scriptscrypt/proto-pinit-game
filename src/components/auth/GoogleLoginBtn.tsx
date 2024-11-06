@@ -32,8 +32,8 @@ const GoogleLoginButton = () => {
       const authRes = await authService.apiSignIn(idToken);
 
       // Store tokens and user email
-      tokenStorage.setAccessToken(authRes.access_token);
-      tokenStorage.setUserEmail(result.user.email || "");
+      tokenStorage.setAccessToken(authRes?.access_token);
+      tokenStorage.setUserEmail(result?.user?.email || "");
 
 
       // Get user details
@@ -47,7 +47,7 @@ const GoogleLoginButton = () => {
     } catch (err: any) {
       setError(err?.message.toString());
       console.error("Login error:", err);
-      tokenStorage.clearTokens(); // Clear any partial data on error
+      // tokenStorage.clearTokens(); // Clear any partial data on error
     } finally {
       setLoading(false);
     }

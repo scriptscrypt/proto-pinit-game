@@ -73,7 +73,8 @@ export const useAuth = () => {
   }, []);
 
   const logout = () => {
-    tokenStorage.clearTokens();
+    // For Testing : 
+    // tokenStorage.clearTokens();
     setIsAuthenticated(false);
     setSignedInEmail(null);
     router.push("/");
