@@ -76,7 +76,7 @@ export const useAuth = () => {
     tokenStorage.clearTokens();
     setIsAuthenticated(false);
     setSignedInEmail(null);
-    router.push("/login");
+    router.push("/");
   };
 
   const checkAuth = () => {
@@ -101,7 +101,7 @@ export const withAuth = (WrappedComponent: React.ComponentType) => {
 
     useEffect(() => {
       if (!isAuthenticated) {
-        router.push("/login");
+        router.push("/");
       }
     }, [isAuthenticated, router]);
 

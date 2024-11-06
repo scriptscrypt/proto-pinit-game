@@ -34,7 +34,7 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       // Clear tokens and redirect to login
       tokenStorage.clearTokens();
-      window.location.href = "/login";
+      window.location.href = "/";
     }
     return Promise.reject(error);
   }
