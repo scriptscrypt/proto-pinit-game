@@ -20,7 +20,7 @@ export function NavbarComp() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleLeaderboardClick = () => {
-    router.push('/leaderboard')
+    router.push('/')
     setIsMenuOpen(false)
   }
 
